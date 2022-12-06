@@ -21,7 +21,8 @@ func main() {
 			continue
 		}
 		if startedMoveInstructions {
-			moveCrates(l)
+			//moveCrates(l)
+			moveCrates9001(l)
 		} else {
 			scanCrates(l)
 		}
@@ -44,6 +45,19 @@ func printColumns() {
 		}
 		fmt.Println("")
 	}
+}
+
+func moveCrates9001(l string) {
+	var qty, to, from int
+	_, err := fmt.Sscanf(l, "move %d from %d to %d", &qty, &from, &to)
+	if err != nil {
+		panic(err)
+	}
+	from--
+	to--
+	var fromIndex = len(columns[from]) - qty
+	columns[to] = append(columns[to], columns[from][fromIndex:]...)
+	columns[from] = columns[from][:fromIndex]
 }
 
 func moveCrates(l string) {
