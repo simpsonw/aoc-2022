@@ -40,6 +40,11 @@ type Command struct {
 var root File
 var pwd *File
 var sum int
+var targetDirectorySize int
+var freeDiskSpace int
+
+const TOTAL_DISK_SPACE = 70000000
+const REQUIRED_DISK_SPACE = 30000000
 
 func main() {
 	root = File{
@@ -60,6 +65,8 @@ func main() {
 			processOutput(l)
 		}
 	}
+	freeDiskSpace = TOTAL_DISK_SPACE - traverseHelper(&root)
+	fmt.Printf("Current free disk space: %d\n", freeDiskSpace)
 	traverse(&root, 0)
 	fmt.Printf("Sum %d\n", sum)
 }
@@ -71,10 +78,20 @@ func traverse(f *File, level int) {
 		}
 	}
 	totalSize := traverseHelper(f)
-	if totalSize < 100000 {
-		sum += totalSize
-		fmt.Printf("%s has a size less than 100000 (%d)\n", f, totalSize)
+
+	if (freeDiskSpace + totalSize) >= REQUIRED_DISK_SPACE {
+		if targetDirectorySize == 0 {
+			targetDirectorySize = totalSize
+		} else if targetDirectorySize > totalSize {
+			targetDirectorySize = totalSize
+			fmt.Printf("Deleting %s (size: %d) will result in %d free disk space, which is more than %d\n", f, totalSize, freeDiskSpace+totalSize, REQUIRED_DISK_SPACE)
+		}
 	}
+	// Part 1
+	//if totalSize < 100000 {
+	//	sum += totalSize
+	//	fmt.Printf("%s has a size less than 100000 (%d)\n", f, totalSize)
+	//}
 }
 
 func traverseHelper(f *File) (totalSize int) {
