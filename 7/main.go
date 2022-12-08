@@ -61,18 +61,32 @@ func main() {
 		}
 	}
 	traverse(&root, 0)
+	//fmt.Printf("Total size for /: %d\n", totalRootSize)
 }
 
 func traverse(f *File, level int) {
 	indentation := strings.Repeat("  ", level)
-	if f.IsDir {
-		fmt.Printf("%s- %s\n", indentation, f)
-		for _, v := range f.Children {
+	totalSize := traverseHelper(f)
+	fmt.Printf("%s- %s (total size: %d)\n", indentation, f, totalSize)
+	for _, v := range f.Children {
+		if v.IsDir {
 			traverse(v, level+1)
 		}
-	} else {
-		fmt.Printf("%s- %s\n", indentation, f)
 	}
+}
+
+func traverseHelper(f *File) (totalSize int) {
+	for _, v := range f.Children {
+		if v.IsDir == false {
+			totalSize += v.Size
+		}
+	}
+	for _, v := range f.Children {
+		if v.IsDir {
+			totalSize += traverseHelper(v)
+		}
+	}
+	return totalSize
 }
 
 func processOutput(l string) {
