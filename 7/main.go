@@ -5,7 +5,6 @@ import (
 	"github.com/simpsonw/aoc-2022/utils"
 	"log"
 	"regexp"
-	"strings"
 )
 
 type File struct {
@@ -40,6 +39,7 @@ type Command struct {
 
 var root File
 var pwd *File
+var sum int
 
 func main() {
 	root = File{
@@ -61,17 +61,19 @@ func main() {
 		}
 	}
 	traverse(&root, 0)
-	//fmt.Printf("Total size for /: %d\n", totalRootSize)
+	fmt.Printf("Sum %d\n", sum)
 }
 
 func traverse(f *File, level int) {
-	indentation := strings.Repeat("  ", level)
-	totalSize := traverseHelper(f)
-	fmt.Printf("%s- %s (total size: %d)\n", indentation, f, totalSize)
 	for _, v := range f.Children {
 		if v.IsDir {
 			traverse(v, level+1)
 		}
+	}
+	totalSize := traverseHelper(f)
+	if totalSize < 100000 {
+		sum += totalSize
+		fmt.Printf("%s has a size less than 100000 (%d)\n", f, totalSize)
 	}
 }
 
